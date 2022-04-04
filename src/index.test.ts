@@ -8,6 +8,26 @@ function loadScript() {
 }
 
 describe("onInit", () => {
+  let colStore = {} as Record<any, any>;
+
+  beforeEach(() => {
+    colStore = {} as Record<any, any>;
+    const mockCol = {
+      get() {
+        return {
+          data: colStore,
+          get: (k: string) => colStore[k],
+          set: (k: string, v: any) => (colStore[k] = v),
+        }
+      }
+    };
+    (env.project as any) = {
+      collectionsManager: {
+        ensureExists: () => mockCol,
+      },
+    };
+  })
+
   // clean listeners
   afterEach(() => {
     messages.removeAllListeners();
@@ -18,24 +38,15 @@ describe("onInit", () => {
     messages.emit('onInit');
   });
 
-  it('prints "Hello, default name!"', () => {
-    const log = jest.fn();
-    platform.log = log;
-
+  it('sets common data to collection', () => {
+    data.NET_TYPE = 'wifi';
+    data.APP_VERSION = '1.2.3'
+    data.BLE_CONNECTED = true;
     loadScript();
 
     messages.emit('onInit');
-    expect(log).toHaveBeenCalledWith('Hello, default name!');
-  });
-
-  it('prints "Hello, custom name!" if given config', () => {
-    const log = jest.fn();
-    platform.log = log;
-    getSettings = () => ({ name: 'custom name' });
-
-    loadScript();
-
-    messages.emit('onInit');
-    expect(log).toHaveBeenCalledWith('Hello, custom name!');
+    expect(colStore.net).toBe('wifi');
+    expect(colStore.appVer).toBe('1.2.3');
+    expect(colStore.bleConnected).toBe(true);
   });
 });
