@@ -4,33 +4,33 @@ specifiers:
   '@babel/core': 7.17.8
   '@babel/plugin-transform-arrow-functions': 7.16.7
   '@babel/preset-env': 7.16.11
-  '@babel/preset-typescript': ^7.16.7
-  '@fermuch/monoutils': ^0.0.37
-  '@fermuch/telematree': ^9.20.0
-  '@jsdevtools/version-bump-prompt': ^6.1.0
+  '@babel/preset-typescript': 7.16.7
+  '@fermuch/monoutils': 0.0.37
+  '@fermuch/telematree': 9.20.0
+  '@jsdevtools/version-bump-prompt': 6.1.0
   '@size-limit/preset-big-lib': 7.0.8
-  '@types/commander': ^2.12.2
+  '@types/commander': 2.12.2
   '@types/firebase': 3.2.1
-  '@types/jest': ^27.4.1
+  '@types/jest': 27.4.1
   '@types/lodash': 4.14.181
   '@types/uuid': 8.3.4
   babel-loader: 8.2.4
   brotli-webpack-plugin: 1.1.0
-  commander: ^9.1.0
+  commander: 9.1.0
   compression-webpack-plugin: 9.2.0
   cross-fetch: 3.1.5
   firebase: 9.6.10
-  graphql: ^16.3.0
+  graphql: 16.3.0
   graphql-request: 4.2.0
   inquirer: 8.2.2
-  jest: ^27.5.1
+  jest: 27.5.1
   lodash: 4.17.21
   mobx: 6.5.0
   mobx-keystone: 0.67.2
-  semver: ^7.3.5
+  semver: 7.3.5
   size-limit: 7.0.8
   ts-loader: 9.2.8
-  typed-emitter: ^2.1.0
+  typed-emitter: 2.1.0
   typescript: 4.6.3
   webpack: 5.71.0
   webpack-cli: 4.9.2
@@ -2161,7 +2161,7 @@ packages:
   /@types/acorn/4.0.6:
     resolution: {integrity: sha512-veQTnWP+1D/xbxVrPC3zHnCZRjSrKfhbMUlEA43iMZLu7EsnTtkJklIuwrCPbOi8YkvDQAiW05VQQFvvz9oieQ==}
     dependencies:
-      '@types/estree': 0.0.41
+      '@types/estree': 0.0.51
     dev: false
 
   /@types/babel__core/7.1.19:
@@ -2220,7 +2220,6 @@ packages:
 
   /@types/estree/0.0.51:
     resolution: {integrity: sha512-CuPgU6f3eT/XgKKPqKd/gLZV1Xmvf1a2R5POBOGQa6uv82xpls89HU5zKeVoyR8XzHd1RGNOlQlvUe3CFkjWNQ==}
-    dev: true
 
   /@types/firebase/3.2.1:
     resolution: {integrity: sha512-G8XgHMu2jHlElfc2xVNaYP50F0qrqeTCjgeG1v5b4SRwWG4XKC4fCuEdVZuZaMRmVygcnbRZBAo9O7RsDvmkGQ==}
@@ -6657,7 +6656,7 @@ packages:
   /wide-align/1.1.5:
     resolution: {integrity: sha512-eDMORYaPNZ4sQIuuYPDHdQvf4gyCF9rEEV/yPxGfwPkRodwEgiMUUXTx/dex+Me0wxx53S+NgUHaP7y3MGlDmg==}
     dependencies:
-      string-width: 1.0.2
+      string-width: 4.2.3
     dev: true
     optional: true
 
