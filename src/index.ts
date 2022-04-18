@@ -13,38 +13,10 @@ declare class BatterySensorEvent extends MonoUtils.wk.event.BaseEvent {
 type Config = Record<string, unknown> & {}
 const conf = new MonoUtils.config.Config<Config>();
 
-/**
- * Util to update a value if it has changed.
- *
- * @param key key of frota collection
- * @param val value for the key or undefined
- * @returns void
- */
-function maybeUpdate<
-  K extends keyof MonoUtils.collections.FrotaCollection
->(
-  key: K,
-  val: MonoUtils.collections.FrotaCollection[K] | undefined
-) {
-  if (typeof val === 'undefined') {
-    return;
-  }
-
-  if (typeof key === 'number') {
-    return;
-  }
-
-  const frota = MonoUtils.collections.getFrotaDoc();
-  const currentVal = (frota.data as typeof frota.data)?.[key];
-  if (currentVal !== val) {
-    frota.set(key, val);
-  }
-}
-
 function updatePeriodically() {
-  maybeUpdate('net', data.NET_TYPE);
-  maybeUpdate('appVer', data.APP_VERSION);
-  maybeUpdate('bleConnected', Boolean(data.BLE_CONNECTED));
+  MonoUtils.collections.maybeUpdateFrota('net', data.NET_TYPE);
+  MonoUtils.collections.maybeUpdateFrota('appVer', data.APP_VERSION);
+  MonoUtils.collections.maybeUpdateFrota('bleConnected', Boolean(data.BLE_CONNECTED));
 }
 
 messages.on('onInit', function() {
@@ -56,16 +28,16 @@ messages.on('onPeriodic', function () {
 });
 
 messages.on('onLogin', function (loginId) {
-  maybeUpdate('currentLogin', loginId);
-  maybeUpdate('loginDate', Date.now());
+  MonoUtils.collections.maybeUpdateFrota('currentLogin', loginId);
+  MonoUtils.collections.maybeUpdateFrota('loginDate', Date.now());
 });
 
 messages.on('onLogout', function () {
-  maybeUpdate('currentLogin', null);
-  maybeUpdate('loginDate', null);
+  MonoUtils.collections.maybeUpdateFrota('currentLogin', null);
+  MonoUtils.collections.maybeUpdateFrota('loginDate', null);
 });
 
 MonoUtils.wk.event.subscribe<BatterySensorEvent>('sensor-battery', function (event) {
-  maybeUpdate('batteryLevel', event.getData().level);
-  maybeUpdate('isLowPower', event.getData().isLowPower);
+  MonoUtils.collections.maybeUpdateFrota('batteryLevel', event.getData().level);
+  MonoUtils.collections.maybeUpdateFrota('isLowPower', event.getData().isLowPower);
 });
