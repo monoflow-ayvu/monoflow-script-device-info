@@ -9,6 +9,19 @@ declare class BatterySensorEvent extends MonoUtils.wk.event.BaseEvent {
   };
 }
 
+declare class GPSSensorEvent extends MonoUtils.wk.event.BaseEvent {
+  kind: "sensor-gps";
+  getData(): {
+    latitude: number;
+    longitude: number;
+    altitude: number;
+    accuracy: number;
+    altitudeAccuracy: number;
+    heading: number;
+    speed: number;
+  };
+}
+
 // based on settingsSchema @ package.json
 type Config = Record<string, unknown> & {}
 const conf = new MonoUtils.config.Config<Config>();
@@ -41,3 +54,23 @@ MonoUtils.wk.event.subscribe<BatterySensorEvent>('sensor-battery', function (eve
   MonoUtils.collections.maybeUpdateFrota('batteryLevel', event.getData().level);
   MonoUtils.collections.maybeUpdateFrota('isLowPower', event.getData().isLowPower);
 });
+
+MonoUtils.wk.event.subscribe<GPSSensorEvent>('sensor-gps', function (event) {
+  try {
+    const data = event.getData();
+    if (data.accuracy <= 30) {
+      env.setData('CURRENT_GPS', {
+        date: Date.now(),
+        latitude: data.latitude,
+        longitude: data.longitude,
+        altitude: data.altitude,
+        accuracy: data.accuracy,
+        altitudeAccuracy: data.altitudeAccuracy,
+        heading: data.heading,
+        speed: data.speed,
+      });
+    }
+  } catch {
+    // ignore
+  }
+})

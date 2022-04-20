@@ -1,3 +1,4 @@
+import * as MonoUtils from "@fermuch/monoutils";
 const read = require('fs').readFileSync;
 const join = require('path').join;
 
@@ -7,12 +8,36 @@ function loadScript() {
   eval(script);
 }
 
+class MockGPSEvent extends MonoUtils.wk.event.BaseEvent {
+  kind = 'sensor-gps' as const;
+
+  constructor(
+    private readonly latitude = 1,
+    private readonly longitude = 1,
+  ) {
+    super();
+  }
+
+  getData() {
+    return {
+      latitude: this.latitude,
+      longitude: this.longitude,
+      altitude: 1,
+      accuracy: 1,
+      altitudeAccuracy: 1,
+      heading: 1,
+      speed: 1,
+    };
+  }
+}
+
 describe("onInit", () => {
   let colStore = {} as Record<any, any>;
 
   beforeEach(() => {
     colStore = {} as Record<any, any>;
     const mockCol = {
+      watch: jest.fn(),
       get() {
         return {
           data: colStore,
@@ -49,4 +74,24 @@ describe("onInit", () => {
     expect(colStore.appVer).toBe('1.2.3');
     expect(colStore.bleConnected).toBe(true);
   });
+
+  it('stores CURRENT_GPS data', () => {
+    data.CURRENT_GPS = undefined;
+
+    loadScript();
+    messages.emit('onInit');
+    messages.emit('onEvent', new MockGPSEvent());
+
+    expect(data.CURRENT_GPS).toBeTruthy();
+    const currentGps = data.CURRENT_GPS as {
+      latitude: number;
+      longitude: number;
+      speed: number;
+      date: number;
+    };
+    expect(currentGps.latitude).toBe(1);
+    expect(currentGps.longitude).toBe(1);
+    expect(currentGps.speed).toBe(1);
+    expect(currentGps.date).toBeGreaterThan(0);
+  })
 });
