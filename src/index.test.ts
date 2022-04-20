@@ -31,6 +31,13 @@ class MockGPSEvent extends MonoUtils.wk.event.BaseEvent {
   }
 }
 
+class MockWebLogout extends MonoUtils.wk.event.BaseEvent {
+  kind = 'web-logout' as const;
+  getData(): null {
+    return null;
+  }
+}
+
 describe("onInit", () => {
   let colStore = {} as Record<any, any>;
 
@@ -93,5 +100,17 @@ describe("onInit", () => {
     expect(currentGps.longitude).toBe(1);
     expect(currentGps.speed).toBe(1);
     expect(currentGps.date).toBeGreaterThan(0);
-  })
+  });
+
+  it('handles ScriptEvent: web-logout', () => {
+    (env.project as any) = {
+      collectionsManager: {
+        ensureExists: jest.fn(),
+      },
+      logout: jest.fn(),
+    };
+    loadScript();
+    messages.emit('onEvent', new MockWebLogout());
+    expect((env.project as any).logout).toHaveBeenCalled();
+  });
 });

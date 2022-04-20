@@ -1,4 +1,5 @@
 import * as MonoUtils from "@fermuch/monoutils";
+import { currentLogin } from "@fermuch/monoutils";
 
 declare class BatterySensorEvent extends MonoUtils.wk.event.BaseEvent {
   kind: "sensor-battery";
@@ -20,6 +21,17 @@ declare class GPSSensorEvent extends MonoUtils.wk.event.BaseEvent {
     heading: number;
     speed: number;
   };
+}
+
+declare class ScriptEvent<K extends string, T> extends MonoUtils.wk.event.BaseEvent {
+  kind: K;
+  payload: T;
+  getData(): T
+}
+
+declare class WebLogout extends ScriptEvent<'web-logout', null> {
+  kind: 'web-logout';
+  payload: null;
 }
 
 // based on settingsSchema @ package.json
@@ -73,4 +85,12 @@ MonoUtils.wk.event.subscribe<GPSSensorEvent>('sensor-gps', function (event) {
   } catch {
     // ignore
   }
-})
+});
+
+MonoUtils.wk.event.subscribe<WebLogout>('web-logout', function () {
+  try {
+    env.project?.logout();
+  } catch {
+    platform.log('could not logout for web-logout');
+  }
+});
