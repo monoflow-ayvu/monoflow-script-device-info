@@ -34,14 +34,53 @@ declare class WebLogout extends ScriptEvent<'web-logout', null> {
   payload: null;
 }
 
+class SyncStateEvent extends MonoUtils.wk.event.BaseEvent {
+  kind = "sync-state";
+
+  constructor(private packets: SyncPacket[]) {
+    super();
+  }
+  
+  getData() {
+    return {
+      packets: this.packets,
+    }
+  }
+}
+
 // based on settingsSchema @ package.json
 type Config = Record<string, unknown> & {}
 const conf = new MonoUtils.config.Config<Config>();
+
+interface SyncPacket {
+  when: number;
+  net: string;
+  hasInternet: boolean;
+  bleConnected: boolean;
+  pulsus: boolean;
+}
+let syncPackets: SyncPacket[] = [];
 
 function updatePeriodically() {
   MonoUtils.collections.maybeUpdateFrota('net', data.NET_TYPE);
   MonoUtils.collections.maybeUpdateFrota('appVer', data.APP_VERSION);
   MonoUtils.collections.maybeUpdateFrota('bleConnected', Boolean(data.BLE_CONNECTED));
+
+  syncPackets.push({
+    when: Date.now(),
+    net: String(data.NET_TYPE),
+    hasInternet: Boolean(data.NET_HAS_INTERNET),
+    bleConnected: Boolean(data.BLE_CONNECTED),
+    pulsus: Boolean(data.PULSUS_ACTIVE),
+  });
+
+  const oldestDate = syncPackets[0]!.when;
+  const now = Date.now();
+  // 5 minutes
+  if ((now - oldestDate) / 1000 >= 300) {
+    env.project.saveEvent(new SyncStateEvent(syncPackets));
+    syncPackets = [];
+  }
 }
 
 messages.on('onInit', function() {
