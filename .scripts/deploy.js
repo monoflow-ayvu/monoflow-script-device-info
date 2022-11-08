@@ -111,7 +111,7 @@ const ui = {
 (async function () {
   ui.log.write(`⚡ Deploying ${package.name}@${package.version} ...\n\n`);
   if (!options.force) {
-    onst prompt = (await import('inquirer')).default.prompt;
+    const prompt = (await import('inquirer')).default.prompt;
     const answers = await prompt(questions);
     if (!answers.deploy) {
       ui.log.write('❌ Deploy cancelled.');
